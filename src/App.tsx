@@ -1,24 +1,57 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { createContext, useState } from 'react';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { LookupForm } from './Lookup/LookupForm';
+import { RecentSearch } from './RecentSearch/RecentSearch';
 import './App.css';
 
-function App() {
+export interface ISearchResult {
+  zipCode: string;
+  city: string;
+  state: string;
+}
+
+export type ISearchResultContext = [
+  searchResults: ISearchResult[],
+  setSearchResults: React.Dispatch<React.SetStateAction<ISearchResult[]>>
+];
+
+export const searchResultsContext = createContext<ISearchResultContext>([[], () => null]);
+
+const App = () => {
+  const [searchResults, setSearchResults] = useState<ISearchResult[]>([]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <searchResultsContext.Provider value={[searchResults, setSearchResults ]}>
+        <AppBar position="static">
+          <Container maxWidth="xl">
+            <Toolbar disableGutters>
+              <Typography
+                variant="h6"
+                noWrap
+                component="a"
+                href="/"
+                sx={{
+                  mr: 2,
+                  display: { xs: 'flex' },
+                  fontFamily: 'monospace',
+                  fontWeight: 700,
+                  letterSpacing: '.3rem',
+                  color: 'inherit',
+                  textDecoration: 'none',
+                }}
+              >
+                Search City/State by ZIP Code
+              </Typography>
+            </Toolbar>
+          </Container>
+        </AppBar>
+        <LookupForm />
+        <RecentSearch />
+      </searchResultsContext.Provider>
     </div>
   );
 }
